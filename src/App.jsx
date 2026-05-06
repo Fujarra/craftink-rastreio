@@ -111,7 +111,7 @@ body{font-family:'DM Sans',sans-serif;background:#2b2b2b;color:#fff;min-height:1
 .btn-create:hover{background:#3fbef0;transform:translateY(-1px);}
 .btn-create:disabled{opacity:.5;cursor:not-allowed;transform:none;}
 .orders-list{display:flex;flex-direction:column;gap:12px;}
-.ocard{background:#222;border:1px solid #383838;border-radius:12px;padding:18px 22px;display:grid;grid-template-columns:1fr auto;gap:12px;transition:border-color .2s;border-left:3px solid #383838;}
+.ocard{background:#222;border:1px solid #383838;border-radius:12px;padding:18px 22px;display:block;transition:border-color .2s;border-left:3px solid #383838;}.oacts{display:flex;flex-direction:row;gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid #383838;}
 .ocard:hover{border-left-color:#29abe3;border-color:#29abe3;}
 .ocard.delivered{border-left-color:#3ab87a;}
 .oh{display:flex;align-items:center;gap:10px;margin-bottom:5px;}
@@ -385,7 +385,7 @@ function Admin({ orders, setOrders }) {
           {orders.map(o => {
             const idx = sIdx(o.stage);
             return (
-              <div className={`ocard${o.stage==="delivered"?" delivered":""}`} key={o.id}>
+              <div className={`ocard${o.stage==="delivered"?" delivered":""}`} key={o.id} style={{display:"block"}}>
                 <div>
                   <div className="oh">
                     <span className="oid">{o.id}</span>
@@ -439,9 +439,10 @@ function Admin({ orders, setOrders }) {
                     </div>
                   </div>
                 </div>
-                <div className="oacts">
-                  <button className="blnk" onClick={()=>copyLink(o.id)}>🔗 Link do cliente</button>
-                  <button className="bdel" onClick={()=>remove(o.id)}>🗑</button>
+                  <div className="oacts">
+                    <button className="blnk" onClick={()=>copyLink(o.id)}>🔗 Link do cliente</button>
+                    <button className="bdel" onClick={()=>remove(o.id)}>🗑</button>
+                  </div>
                 </div>
               </div>
             );
