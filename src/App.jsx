@@ -441,7 +441,7 @@ function Admin({ orders, setOrders }) {
                 </div>
                   <div className="oacts">
                     <button className="blnk" onClick={()=>copyLink(o.id)}>🔗 Link do cliente</button>
-                    <button className="bdel" onClick={()=>remove(o.id)}>🗑</button>
+                    <button className="bdel" onClick={()=>remove(o.id)}>Excluir</button>
                   </div>
                 </div>
               </div>
