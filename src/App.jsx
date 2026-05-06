@@ -482,42 +482,116 @@ function Tracking({ initId }) {
   );
 }
 
+// ─── SENHA ADMIN ──────────────────────────────────────────────────────
+const ADMIN_PASSWORD = "craftink2025";
+
+function LoginScreen({ onLogin }) {
+  const [pwd, setPwd] = useState("");
+  const [err, setErr] = useState(false);
+
+  function tryLogin() {
+    if (pwd === ADMIN_PASSWORD) {
+      sessionStorage.setItem("ci_auth", "1");
+      onLogin();
+    } else {
+      setErr(true);
+      setTimeout(() => setErr(false), 2000);
+    }
+  }
+
+  return (
+    <div style={{minHeight:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"40px 24px",background:"radial-gradient(ellipse at 50% -10%,#1a2a35 0%,#2b2b2b 60%)"}}>
+      <div style={{display:"flex",flexDirection:"column",alignItems:"center",marginBottom:40}}>
+        <LogoSVG height={48}/>
+        <div style={{display:"flex",gap:6,marginTop:10,justifyContent:"center"}}>
+          <div style={{width:8,height:8,borderRadius:1,background:"#29abe3"}}/>
+          <div style={{width:8,height:8,borderRadius:1,background:"#e32285"}}/>
+          <div style={{width:8,height:8,borderRadius:1,background:"#faea27"}}/>
+        </div>
+        <div style={{textAlign:"center",color:"#888",fontSize:".78rem",letterSpacing:2,textTransform:"uppercase",marginTop:6}}>Área administrativa</div>
+      </div>
+
+      <div style={{width:"100%",maxWidth:380,background:"#222",border:"1px solid #383838",borderRadius:16,padding:"32px 36px",borderTop:"3px solid #29abe3"}}>
+        <div style={{fontSize:".75rem",fontWeight:700,color:"#29abe3",textTransform:"uppercase",letterSpacing:1.5,marginBottom:20}}>🔒 Acesso restrito</div>
+        <div style={{display:"flex",flexDirection:"column",gap:6,marginBottom:16}}>
+          <label style={{fontSize:".72rem",color:"#888",textTransform:"uppercase",letterSpacing:.8}}>Senha</label>
+          <input
+            type="password"
+            placeholder="Digite a senha"
+            value={pwd}
+            onChange={e=>{setPwd(e.target.value);setErr(false);}}
+            onKeyDown={e=>e.key==="Enter"&&tryLogin()}
+            style={{background:"#1a1a1a",border:`1px solid ${err?"#e32285":"#383838"}`,borderRadius:8,padding:"11px 14px",color:"#fff",fontFamily:"'DM Sans',sans-serif",fontSize:".9rem",outline:"none",transition:"border-color .2s"}}
+          />
+          {err && <div style={{fontSize:".78rem",color:"#e32285",marginTop:2}}>Senha incorreta. Tente novamente.</div>}
+        </div>
+        <button
+          onClick={tryLogin}
+          style={{width:"100%",padding:"11px 0",background:"#29abe3",color:"#1a1a1a",border:"none",borderRadius:8,fontFamily:"'DM Sans',sans-serif",fontWeight:700,fontSize:".9rem",cursor:"pointer",transition:"background .2s"}}
+        >
+          Entrar
+        </button>
+      </div>
+    </div>
+  );
+}
+
 // ─── ROOT ─────────────────────────────────────────────────────────────
 export default function App() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [authed, setAuthed] = useState(() => sessionStorage.getItem("ci_auth") === "1");
   const params = new URLSearchParams(typeof window!=="undefined" ? window.location.search : "");
   const tid = params.get("track")||"";
+  // Se vier com ?track=, vai direto para rastreamento sem pedir senha
   const [tab, setTab] = useState(tid ? "track" : "admin");
 
   useEffect(() => {
-    if (tab === "admin") {
+    if (tab === "admin" && authed) {
       setLoading(true);
       db.getAll().then(data => { setOrders(data||[]); setLoading(false); });
     }
-  }, [tab]);
+  }, [tab, authed]);
 
   return (
     <>
       <style>{CSS}</style>
       <div className="accent-stripe"/>
-      <div className="topbar">
-        <LogoSVG height={30}/>
-        <div className="nav-tabs">
-          <button className={`tab-btn${tab==="admin"?" ac":""}`} onClick={()=>setTab("admin")}>⚙️ Admin</button>
-          <button className={`tab-btn${tab==="track"?" am":""}`} onClick={()=>setTab("track")}>📦 Rastrear Pedido</button>
-        </div>
-      </div>
-      {tab==="admin" ? (
-        loading ? (
-          <div className="loading" style={{paddingTop:80}}>
-            <span className="loading-spin">⏳</span>Carregando pedidos...
+
+      {/* Aba de rastreamento — sempre pública, sem senha */}
+      {tab === "track" ? (
+        <>
+          <div className="topbar">
+            <LogoSVG height={30}/>
+            <div className="nav-tabs">
+              <button className="tab-btn am">📦 Rastrear Pedido</button>
+            </div>
           </div>
-        ) : (
-          <Admin orders={orders} setOrders={setOrders}/>
-        )
+          <Tracking initId={tid}/>
+        </>
       ) : (
-        <Tracking initId={tid}/>
+        /* Aba admin — exige senha */
+        !authed ? (
+          <LoginScreen onLogin={()=>setAuthed(true)}/>
+        ) : (
+          <>
+            <div className="topbar">
+              <LogoSVG height={30}/>
+              <div className="nav-tabs">
+                <button className={`tab-btn${tab==="admin"?" ac":""}`} onClick={()=>setTab("admin")}>⚙️ Admin</button>
+                <button className={`tab-btn${tab==="track"?" am":""}`} onClick={()=>setTab("track")}>📦 Rastrear Pedido</button>
+                <button className="tab-btn" style={{color:"#888"}} onClick={()=>{sessionStorage.removeItem("ci_auth");setAuthed(false);}}>Sair</button>
+              </div>
+            </div>
+            {loading ? (
+              <div className="loading" style={{paddingTop:80}}>
+                <span className="loading-spin">⏳</span>Carregando pedidos...
+              </div>
+            ) : (
+              <Admin orders={orders} setOrders={setOrders}/>
+            )}
+          </>
+        )
       )}
     </>
   );
