@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 
-// ─── Supabase config ──────────────────────────────────────────────────
+// --- Supabase config --------------------------------------------------
 const SUPABASE_URL = "https://uzheulxrxwjsucjjktsy.supabase.co";
 const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV6aGV1bHhyeHdqc3VjamprdHN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgwMjM2MDQsImV4cCI6MjA5MzU5OTYwNH0.20KH3c3PaqNfOj4EAK8OslWb_Znrsva69ZX4UFl1EjU";
 
@@ -54,7 +54,7 @@ const db = {
   },
 };
 
-// ─── Logo SVG ─────────────────────────────────────────────────────────
+// --- Logo SVG ---------------------------------------------------------
 const LogoSVG = ({ height = 36 }) => (
   <svg height={height} viewBox="0 0 810.69 265.31" xmlns="http://www.w3.org/2000/svg" style={{display:"block"}}>
     <defs><style>{`.lc1{fill:#fff}.lc2{fill:#faea27}.lc3{fill:#e32285}.lc4{fill:#29abe3}`}</style></defs>
@@ -83,7 +83,7 @@ const LogoSVG = ({ height = 36 }) => (
   </svg>
 );
 
-// ─── CSS ──────────────────────────────────────────────────────────────
+// --- CSS --------------------------------------------------------------
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap');
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -194,7 +194,7 @@ body{font-family:'DM Sans',sans-serif;background:#2b2b2b;color:#fff;min-height:1
 .tcnotes strong{color:#fff;}
 .tnf{width:100%;max-width:540px;background:#222;border:1px solid #383838;border-radius:16px;padding:32px;text-align:center;color:#888;}
 
-/* ── MOBILE ── */
+/* -- MOBILE -- */
 @media(max-width:640px){
   .topbar{padding:12px 14px;}
   .tab-btn{padding:7px 10px;font-size:.75rem;}
@@ -268,13 +268,13 @@ function Lightbox({ src, onClose }) {
   if (!src) return null;
   return (
     <div className="lightbox-overlay" onClick={onClose}>
-      <button className="lightbox-close" onClick={onClose}>✕</button>
+      <button className="lightbox-close" onClick={onClose}>x</button>
       <img className="lightbox-img" src={src} alt="Foto do pedido" onClick={e=>e.stopPropagation()} />
     </div>
   );
 }
 
-// ─── ADMIN ────────────────────────────────────────────────────────────
+// --- ADMIN ------------------------------------------------------------
 function Admin({ orders, setOrders }) {
   const [f, setF] = useState({client:"",phone:"",item:"",qty:"1",notes:""});
   const [toast, setToast] = useState("");
@@ -365,7 +365,7 @@ function Admin({ orders, setOrders }) {
       <p className="page-sub">Crie pedidos, avance o status, adicione fotos por etapa e copie o link para o cliente.</p>
 
       <div className="order-form">
-        <div className="form-ttl">＋ Novo Pedido</div>
+        <div className="form-ttl">+ Novo Pedido</div>
         <div className="form-grid">
           <div className="fg"><label>Nome do cliente</label><input placeholder="Ex: Ana Lima" value={f.client} onChange={e=>setF({...f,client:e.target.value})}/></div>
           <div className="fg"><label>WhatsApp</label><input placeholder="(11) 99999-9999" value={f.phone} onChange={e=>setF({...f,phone:e.target.value})}/></div>
@@ -390,9 +390,9 @@ function Admin({ orders, setOrders }) {
                   <div className="oh">
                     <span className="oid">{o.id}</span>
                     <span className="oname">{o.client}</span>
-                    {o.stage==="delivered" && <span className="bdone-badge">✓ Entregue</span>}
+                    {o.stage==="delivered" && <span className="bdone-badge">v Entregue</span>}
                   </div>
-                  <div className="ometa">{o.qty}× {o.item}{o.phone ? ` · ${o.phone}` : ""}</div>
+                  <div className="ometa">{o.qty}× {o.item}{o.phone ? ` - ${o.phone}` : ""}</div>
                   <div className="srow">
                     {STAGES.map((s,i) => {
                       let c = "sc ";
@@ -404,7 +404,7 @@ function Admin({ orders, setOrders }) {
                           <span className={c} onClick={()=>{if(i===idx+1)advance(o.id);}} title={i===idx+1?"Avançar para esta etapa":""}>
                             {s.icon} {s.label}
                           </span>
-                          {i < STAGES.length-1 && <span className="sarr"> › </span>}
+                          {i < STAGES.length-1 && <span className="sarr"> > </span>}
                         </span>
                       );
                     })}
@@ -422,7 +422,7 @@ function Admin({ orders, setOrders }) {
                             {photo ? (
                               <>
                                 <img className="photo-thumb" src={photo.src} alt={s.label} onClick={()=>setLightbox(photo.src)} title="Clique para ampliar"/>
-                                <button className="photo-remove" onClick={()=>removePhoto(o.id,s.key)}>✕ remover</button>
+                                <button className="photo-remove" onClick={()=>removePhoto(o.id,s.key)}>x remover</button>
                               </>
                             ) : (
                               <>
@@ -455,7 +455,7 @@ function Admin({ orders, setOrders }) {
   );
 }
 
-// ─── TRACKING ─────────────────────────────────────────────────────────
+// --- TRACKING ---------------------------------------------------------
 function Tracking({ initId }) {
   const [inp, setInp] = useState(initId||"");
   const [aid, setAid] = useState(initId||"");
@@ -519,13 +519,13 @@ function Tracking({ initId }) {
               return (
                 <div className={c} key={s.key}>
                   {i < STAGES.length-1 && <div className="tlconn"/>}
-                  <div className="tldotc"><div className="tldot">{i<=idx ? s.icon : "○"}</div></div>
+                  <div className="tldotc"><div className="tldot">{i<=idx ? s.icon : "o"}</div></div>
                   <div className="tlbody">
                     <div className="tlst">{s.label}{i===idx&&<span className="tlbadge">AGORA</span>}</div>
                     {h && <div className="tldt">{fmt(h.ts)}</div>}
                     {photo && i<=idx && (
                       <div className="tl-photo-wrap">
-                        <img className="tl-photo" src={photo.src} alt={`Foto — ${s.label}`} onClick={()=>setLightbox(photo.src)}/>
+                        <img className="tl-photo" src={photo.src} alt={`Foto - ${s.label}`} onClick={()=>setLightbox(photo.src)}/>
                         <div className="tl-photo-caption"><span>🔍</span> Clique para ampliar</div>
                       </div>
                     )}
@@ -542,7 +542,7 @@ function Tracking({ initId }) {
   );
 }
 
-// ─── SENHA ADMIN ──────────────────────────────────────────────────────
+// --- SENHA ADMIN ------------------------------------------------------
 const ADMIN_PASSWORD = "CR4FT1NKTRAKER";
 
 function LoginScreen({ onLogin }) {
@@ -596,7 +596,7 @@ function LoginScreen({ onLogin }) {
   );
 }
 
-// ─── ROOT ─────────────────────────────────────────────────────────────
+// --- ROOT -------------------------------------------------------------
 export default function App() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
