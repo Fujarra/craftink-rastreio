@@ -46,11 +46,11 @@ const db = {
   },
 
   async getById(id) {
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/pedidos?id=eq.${id}`, {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/pedidos?id=eq.${id}&limit=1`, {
       headers: this.headers,
     });
     const data = await r.json();
-    return Array.isArray(data) ? data[0] : null;
+    return Array.isArray(data) && data.length > 0 ? data[0] : null;
   },
 };
 
@@ -260,14 +260,17 @@ function Admin({ orders, setOrders }) {
     if (!f.client.trim() || !f.item.trim()) return;
     setSaving(true);
     try {
+      const customId = genId();
       const o = {
-        id: genId(), client: f.client.trim(), phone: f.phone.trim(),
+        id: customId, client: f.client.trim(), phone: f.phone.trim(),
         item: f.item.trim(), qty: f.qty||"1", notes: f.notes.trim(),
         stage: "received",
         history: [{stage:"received", ts: Date.now()}],
         photos: {},
       };
-      const saved = await db.insert(o);
+      await db.insert(o);
+      // Busca o pedido recém criado pelo id customizado
+      const saved = await db.getById(customId);
       setOrders(prev => [saved || o, ...prev]);
       setF({client:"",phone:"",item:"",qty:"1",notes:""});
       toast_("Pedido " + o.id + " criado e salvo! ✅");
