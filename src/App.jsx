@@ -226,29 +226,6 @@ body{font-family:'DM Sans',sans-serif;background:#2b2b2b;color:#fff;min-height:1
   .tsbar button{width:100%;padding:13px;}
   .tl-photo{max-width:100%;}
 }
-  .tab-btn{padding:7px 12px;font-size:.78rem;}
-  .admin{padding:24px 16px;}
-  .page-title{font-size:1.3rem;}
-  .order-form{padding:20px 16px;}
-  .form-grid{grid-template-columns:1fr;}
-  .sp3{grid-column:span 1;}
-  .orders-list{gap:10px;}
-  .ocard{grid-template-columns:1fr;padding:16px;}
-  .oacts{flex-direction:row;justify-content:flex-start;padding-top:12px;border-top:1px solid #383838;}
-  .blnk{flex:1;text-align:center;}
-  .srow{overflow-x:auto;flex-wrap:nowrap;padding-bottom:6px;-webkit-overflow-scrolling:touch;}
-  .srow::-webkit-scrollbar{height:3px;}
-  .srow::-webkit-scrollbar-thumb{background:#383838;border-radius:2px;}
-  .sc{font-size:.68rem;padding:4px 9px;}
-  .photo-stages{gap:8px;}
-  .photo-thumb,.photo-upload-btn{width:60px;height:60px;}
-  .oh{flex-wrap:wrap;gap:6px;}
-  .ometa{font-size:.75rem;}
-  .tcard{padding:24px 20px;}
-  .tcid{font-size:1.5rem;}
-  .tsbar{flex-direction:column;}
-  .tsbar button{width:100%;}
-}
 `;
 
 const STAGES = [
@@ -438,7 +415,6 @@ function Admin({ orders, setOrders }) {
                       })}
                     </div>
                   </div>
-                </div>
                   <div className="oacts">
                     <button className="blnk" onClick={()=>copyLink(o.id)}>🔗 Link do cliente</button>
                     <button className="bdel" onClick={()=>remove(o.id)}>Excluir</button>
@@ -449,7 +425,7 @@ function Admin({ orders, setOrders }) {
           })}
         </div>
       )}
-      {toast && <div className={`toast${toastErr?" err":""}`}>{toast}</div>}
+      {toast && <div className={"toast" + (toastErr ? " err" : "")}>{toast}</div>}
       <Lightbox src={lightbox} onClose={()=>setLightbox(null)}/>
     </div>
   );
