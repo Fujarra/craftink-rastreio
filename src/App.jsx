@@ -193,6 +193,33 @@ body{font-family:'DM Sans',sans-serif;background:#2b2b2b;color:#fff;min-height:1
 .tcnotes{margin-top:22px;padding-top:18px;border-top:1px solid #383838;color:#888;font-size:.85rem;line-height:1.6;}
 .tcnotes strong{color:#fff;}
 .tnf{width:100%;max-width:540px;background:#222;border:1px solid #383838;border-radius:16px;padding:32px;text-align:center;color:#888;}
+
+/* ── MOBILE ── */
+@media(max-width:640px){
+  .topbar{padding:12px 16px;}
+  .tab-btn{padding:7px 12px;font-size:.78rem;}
+  .admin{padding:24px 16px;}
+  .page-title{font-size:1.3rem;}
+  .order-form{padding:20px 16px;}
+  .form-grid{grid-template-columns:1fr;}
+  .sp3{grid-column:span 1;}
+  .orders-list{gap:10px;}
+  .ocard{grid-template-columns:1fr;padding:16px;}
+  .oacts{flex-direction:row;justify-content:flex-start;padding-top:12px;border-top:1px solid #383838;}
+  .blnk{flex:1;text-align:center;}
+  .srow{overflow-x:auto;flex-wrap:nowrap;padding-bottom:6px;-webkit-overflow-scrolling:touch;}
+  .srow::-webkit-scrollbar{height:3px;}
+  .srow::-webkit-scrollbar-thumb{background:#383838;border-radius:2px;}
+  .sc{font-size:.68rem;padding:4px 9px;}
+  .photo-stages{gap:8px;}
+  .photo-thumb,.photo-upload-btn{width:60px;height:60px;}
+  .oh{flex-wrap:wrap;gap:6px;}
+  .ometa{font-size:.75rem;}
+  .tcard{padding:24px 20px;}
+  .tcid{font-size:1.5rem;}
+  .tsbar{flex-direction:column;}
+  .tsbar button{width:100%;}
+}
 `;
 
 const STAGES = [
@@ -483,7 +510,7 @@ function Tracking({ initId }) {
 }
 
 // ─── SENHA ADMIN ──────────────────────────────────────────────────────
-const ADMIN_PASSWORD = "craftink2025";
+const ADMIN_PASSWORD = "CR4FT1NKTRAKER";
 
 function LoginScreen({ onLogin }) {
   const [pwd, setPwd] = useState("");
