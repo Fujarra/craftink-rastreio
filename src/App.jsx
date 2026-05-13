@@ -309,20 +309,39 @@ function Admin({ orders, setOrders }) {
     toast_("Link copiado! 🔗 Envie no WhatsApp");
   }
 
+  function compressImage(file, maxWidth=800, quality=0.7) {
+    return new Promise(resolve => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let w = img.width, h = img.height;
+          if (w > maxWidth) { h = Math.round(h * maxWidth / w); w = maxWidth; }
+          canvas.width = w; canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
   function handlePhotoUpload(orderId, stageKey, file) {
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = async e => {
+    toast_("Comprimindo foto... ⏳");
+    compressImage(file).then(async compressed => {
       const o = orders.find(x => x.id === orderId);
       if (!o) return;
       const existingPhotos = typeof (o.photos||{}) === 'string' ? JSON.parse(o.photos||'{}') : (o.photos||{});
-      const newPhotos = {...existingPhotos, [stageKey]: {src: e.target.result, ts: Date.now()}};
+      const newPhotos = {...existingPhotos, [stageKey]: {src: compressed, ts: Date.now()}};
       const updated = {...o, photos: newPhotos};
       setOrders(prev => prev.map(x => x.id===orderId ? updated : x));
       await db.update(orderId, {photos: newPhotos});
       toast_("Foto salva! 📸");
-    };
-    reader.readAsDataURL(file);
+    });
   }
 
   async function removePhoto(orderId, stageKey) {
