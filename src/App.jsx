@@ -315,7 +315,8 @@ function Admin({ orders, setOrders }) {
     reader.onload = async e => {
       const o = orders.find(x => x.id === orderId);
       if (!o) return;
-      const newPhotos = {...(o.photos||{}), [stageKey]: {src: e.target.result, ts: Date.now()}};
+      const existingPhotos = typeof (o.photos||{}) === 'string' ? JSON.parse(o.photos||'{}') : (o.photos||{});
+      const newPhotos = {...existingPhotos, [stageKey]: {src: e.target.result, ts: Date.now()}};
       const updated = {...o, photos: newPhotos};
       setOrders(prev => prev.map(x => x.id===orderId ? updated : x));
       await db.update(orderId, {photos: newPhotos});
@@ -334,6 +335,10 @@ function Admin({ orders, setOrders }) {
     await db.update(orderId, {photos: newPhotos});
   }
 
+  const getPhotos = o => {
+    const raw = o.photos||{};
+    return typeof raw === 'string' ? JSON.parse(raw) : raw;
+  };
   const reachedStages = o => STAGES.filter((_,i) => i <= sIdx(o.stage));
 
   return (
@@ -392,7 +397,7 @@ function Admin({ orders, setOrders }) {
                     <div className="photo-section-title">📸 Fotos por etapa — visíveis para o cliente</div>
                     <div className="photo-stages">
                       {reachedStages(o).map(s => {
-                        const photo = (o.photos||{})[s.key];
+                        const photo = getPhotos(o)[s.key];
                         const refKey = o.id + "_" + s.key;
                         return (
                           <div className="photo-slot" key={s.key}>
@@ -488,7 +493,9 @@ function Tracking({ initId }) {
             {STAGES.map((s,i) => {
               const idx = sIdx(order.stage);
               const h = (order.history||[]).find(x=>x.stage===s.key);
-              const photo = (order.photos||{})[s.key];
+              const photosRaw = order.photos||{};
+              const photos = typeof photosRaw === 'string' ? JSON.parse(photosRaw) : photosRaw;
+              const photo = photos[s.key];
               let c = "tli ";
               if (i < idx) c += "tldone";
               else if (i === idx) c += "tlcurr";
