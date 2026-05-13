@@ -47,7 +47,7 @@ const db = {
 
   async getById(id) {
     const r = await fetch(`${SUPABASE_URL}/rest/v1/pedidos?id=eq.${id}&limit=1`, {
-      headers: this.headers,
+      headers: { ...this.headers, "Cache-Control": "no-cache", "Pragma": "no-cache" },
     });
     const data = await r.json();
     return Array.isArray(data) && data.length > 0 ? data[0] : null;
@@ -449,6 +449,12 @@ function Tracking({ initId }) {
     if (!aid) return;
     setSearching(true); setNotFound(false); setOrder(null);
     db.getById(aid.toUpperCase()).then(o => {
+      if (o && o.photos && typeof o.photos === 'string') {
+        try { o.photos = JSON.parse(o.photos); } catch(e) { o.photos = {}; }
+      }
+      if (o && o.history && typeof o.history === 'string') {
+        try { o.history = JSON.parse(o.history); } catch(e) { o.history = []; }
+      }
       setOrder(o||null);
       setNotFound(!o);
       setSearching(false);
